@@ -17,6 +17,7 @@ class Table(Base):
         self._between_start = None
         self._between_end = None
         self._as = None
+        self._on = None
         self._equal = None
         self._is_null = False
         self._is_not_null = False
@@ -49,6 +50,10 @@ class Table(Base):
 
     def AS(self, alias):
         self._as = alias
+        return self
+
+    def ON(self, *args):
+        self._on = args
         return self
 
     @property
@@ -84,29 +89,33 @@ class Table(Base):
         return self
 
     def to_string(self):
-        output = '%s' % self.name
-
-        if self.column:
-            output = '%s.%s' % (output, self.column)
-
-        if self._as:
-            output = '%s AS %s' % (output, self._as)
-
-        # TODO: Not valid with _as
         if self._between_start and not self._between_end:
             raise NotImplementedError()
+
+        output = u'%s' % self.name
+
+        if self.column:
+            output = u'%s.%s' % (output, self.column)
+
+        # Mutually exclusive cases
+        if self._as is not None:
+            output = u'%s AS %s' % (output, self._as)
+        elif self._on is not None:
+            output = u'%s ON' % output
+            for on in self._on:
+                output = u'%s %s' % (output, on)
         elif self._between_start and self._between_end:
-            output = '%s BETWEEN %s AND %s' % (output, self._between_start, self._between_end)
-        elif isinstance(self._equal, Param):
-            output = '%s = %s' % (output, self._equal)
+            output = u'%s BETWEEN %s AND %s' % (output, self._between_start, self._between_end)
+        elif isinstance(self._equal, (Param, Table)):
+            output = u'%s = %s' % (output, self._equal)
         elif self._is_null:
-            output = '%s IS NULL' % output
+            output = u'%s IS NULL' % output
         elif self._is_not_null:
-            output = '%s IS NOT NULL' % output
+            output = u'%s IS NOT NULL' % output
         elif self._asc:
-            output = '%s ASC' % output
+            output = u'%s ASC' % output
         elif self._desc:
-            output = '%s DESC' % output
+            output = u'%s DESC' % output
 
         return output
 
@@ -116,7 +125,7 @@ class Param(Base):
         self.name = name
 
     def to_string(self):
-        return '%(' + self.name + ')s'
+        return u'%(' + unicode(self.name) + u')s'
 
 
 class Condition(Base):
@@ -133,20 +142,20 @@ class Condition(Base):
 
     def to_string(self):
         output = self.CONDITION
-        condition_string = ' '.join([str(c) for c in self.conditions])
+        condition_string = u' '.join([unicode(c) for c in self.conditions])
 
         if len(self.conditions) == 1:
-            return '%s %s' % (output, condition_string)
+            return u'%s %s' % (output, condition_string)
         else:
-            return '%s (%s)' % (output, condition_string)
+            return u'%s (%s)' % (output, condition_string)
 
 
 class AND(Condition):
-    CONDITION = 'AND'
+    CONDITION = u'AND'
 
 
 class OR(Condition):
-    CONDITION = 'OR'
+    CONDITION = u'OR'
 
 
 class SELECT(Base):
@@ -154,42 +163,98 @@ class SELECT(Base):
         self._select = args
 
         self._from = None
+        self._joins = []
         self._where = None
         self._group_by = None
         self._having = None
         self._order_by = None
         self._limit = None
+        self._offset = None
 
     def FROM(self, *args):
         self._from = args
+        return self
+
+    def INNER_JOIN(self, join):
+        self._joins.append((u'INNER', join))
+        return self
+
+    def OUTER_JOIN(self, join):
+        self._joins.append((u'OUTER', join))
+        return self
+
+    def FULL_OUTER_JOIN(self, join):
+        self._joins.append((u'FULL OUTER', join))
+        return self
+
+    def LEFT_OUTER_JOIN(self, join):
+        self._joins.append((u'LEFT OUTER', join))
+        return self
+
+    def RIGHT_OUTER_JOIN(self, join):
+        self._joins.append((u'RIGHT OUTER', join))
         return self
 
     def WHERE(self, *args):
         self._where = args
         return self
 
+    def GROUP_BY(self, *args):
+        self._group_by = args
+        return self
+
+    def HAVING(self, *args):
+        self._having = args
+        return self
+
     def ORDER_BY(self, *args):
         self._order_by = args
         return self
 
-    def LIMIT(self, *args):
-        self._limit = args
+    def LIMIT(self, limit):
+        if not isinstance(limit, int):
+            raise ValueError(u'LIMIT must be an integer, got "%s"' % limit)
+
+        self._limit = limit
+        return self
+
+    def OFFSET(self, offset):
+        if not isinstance(offset, int):
+            raise ValueError(u'OFFSET must be an integer, got "%s"' % offset)
+
+        self._offset = offset
         return self
 
     def to_string(self):
         sections = [
-            'SELECT %s' % ', '.join([str(s) for s in self._select]),
-            'FROM %s' % ', '.join([str(s) for s in self._from]),
+            u'SELECT %s' % u', '.join([unicode(s) for s in self._select]),
+            u'FROM %s' % u', '.join([unicode(s) for s in self._from]),
         ]
+
+        if self._joins:
+            for join in self._joins:
+                sections.append(
+                    u'%s JOIN %s' % (join[0], join[1])
+                )
 
         if self._where is not None:
             sections.append(
-                'WHERE %s' % ' '.join([str(s) for s in self._where])
+                u'WHERE %s' % u' '.join([unicode(s) for s in self._where])
             )
 
         if self._order_by is not None:
             sections.append(
-                'ORDER BY %s' % ' '.join([str(s) for s in self._order_by])
+                u'ORDER BY %s' % u' '.join([unicode(s) for s in self._order_by])
             )
 
-        return '\n'.join(sections)
+        if self._limit is not None:
+            sections.append(
+                u'LIMIT %s' % self._limit
+            )
+
+            if self._offset is not None:
+                sections.append(
+                    u'OFFSET %s' % self._offset
+                )
+
+        return u'\n'.join(sections)
