@@ -84,12 +84,15 @@ class TheSelectClass(unittest.TestCase):
                 .AS('grouped_products')
         )
 
-        categories = Param('categories')
+        categories_param = Param('categories')
+        categories_table = Table('categories')
+
         query = str(
             SELECT(grouped_purchases.category, grouped_purchases.num_purchases, grouped_products.num_products)
                 .FROM(grouped_purchases)
                 .INNER_JOIN(grouped_products.ON(grouped_purchases.category == grouped_products.category))
-                .WHERE(grouped_purchases.category == ANY(categories))
+                .WHERE(AND(grouped_purchases.category == ANY(categories_param),
+                           grouped_purchases.category.IN(SELECT(categories_table.category).FROM(categories_table))))
         )
 
         expected_query = '\n'.join([
@@ -104,7 +107,11 @@ class TheSelectClass(unittest.TestCase):
             "\tFROM products",
             "\tGROUP BY products.category",
             ") AS grouped_products ON grouped_purchases.category = grouped_products.category",
-            "WHERE grouped_purchases.category = ANY(%(categories)s)",
+            "WHERE grouped_purchases.category = ANY(%(categories)s) "
+            "AND grouped_purchases.category IN (",
+            "\tSELECT categories.category",
+            "\tFROM categories",
+            ")",
         ])
 
         self.assertEqual(query, expected_query)

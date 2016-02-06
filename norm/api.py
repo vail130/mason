@@ -17,6 +17,7 @@ class Table(Base):
 
         self._between_start = None
         self._between_end = None
+        self._in = None
         self._as = None
         self._on = None
         self._equal = None
@@ -57,6 +58,10 @@ class Table(Base):
             raise NotImplementedError()
 
         self._between_start = start
+        return self
+
+    def IN(self, arg):
+        self._in = arg
         return self
 
     def AND(self, end):
@@ -127,6 +132,11 @@ class Table(Base):
             output = u'%s ON' % output
             for on in self._on:
                 output = u'%s %s' % (output, on)
+        elif self._in is not None:
+            if isinstance(self._in, SELECT):
+                output = u'%s IN (\n%s\n)' % (output, self._in.to_string(nest_level=1))
+            else:
+                output = u'%s IN (%s)' % (output, self._in)
         elif self._between_start and self._between_end:
             output = u'%s BETWEEN %s AND %s' % (output, self._between_start, self._between_end)
         elif isinstance(self._equal, (Param, Table)):
