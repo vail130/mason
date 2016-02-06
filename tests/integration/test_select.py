@@ -3,7 +3,7 @@ from __future__ import print_function
 
 import unittest
 
-from norm import Table, Param, SELECT, AND, OR, COUNT, SUM, ANY
+from norm import Param, ANY, SELECT, COUNT, SUM, AND, OR, Table, NUMERIC, DATE
 
 
 class TheSelectClass(unittest.TestCase):
@@ -15,7 +15,8 @@ class TheSelectClass(unittest.TestCase):
         end = Param('end')
 
         query = str(
-            SELECT(purchases.id, purchases.product_name, purchases.product_price)
+            SELECT(purchases.id, purchases.product_name, NUMERIC(purchases.product_price, 10, 2),
+                   DATE(purchases.datetime_purchased))
                 .FROM(purchases)
                 .INNER_JOIN(users.ON(purchases.purchaser_id == users.user_id))
                 .WHERE(AND(purchases.datetime_purchased.BETWEEN(start).AND(end),
@@ -27,7 +28,8 @@ class TheSelectClass(unittest.TestCase):
         )
 
         expected_query = '\n'.join([
-            "SELECT purchases.id, purchases.product_name, purchases.product_price",
+            "SELECT purchases.id, purchases.product_name, "
+            "(purchases.product_price)::NUMERIC(10, 2), (purchases.datetime_purchased)::DATE",
             "FROM purchases",
             "INNER JOIN users ON purchases.purchaser_id = users.user_id",
             "WHERE purchases.datetime_purchased BETWEEN %(start)s AND %(end)s "
