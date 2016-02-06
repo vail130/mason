@@ -19,6 +19,10 @@ class Table(Base):
         self._as = None
         self._on = None
         self._equal = None
+        self._greater = None
+        self._greater_equal = None
+        self._less = None
+        self._less_equal = None
         self._is_null = False
         self._is_not_null = False
         self._asc = False
@@ -29,6 +33,22 @@ class Table(Base):
 
     def __eq__(self, other):
         self._equal = other
+        return self
+
+    def __gt__(self, other):
+        self._greater = other
+        return self
+
+    def __ge__(self, other):
+        self._greater_equal = other
+        return self
+
+    def __lt__(self, other):
+        self._less = other
+        return self
+
+    def __le__(self, other):
+        self._less_equal = other
         return self
 
     def BETWEEN(self, start):
@@ -108,6 +128,14 @@ class Table(Base):
             output = u'%s BETWEEN %s AND %s' % (output, self._between_start, self._between_end)
         elif isinstance(self._equal, (Param, Table)):
             output = u'%s = %s' % (output, self._equal)
+        elif isinstance(self._greater, (Param, Table)):
+            output = u'%s > %s' % (output, self._equal)
+        elif isinstance(self._greater_equal, (Param, Table)):
+            output = u'%s >= %s' % (output, self._equal)
+        elif isinstance(self._less, (Param, Table)):
+            output = u'%s < %s' % (output, self._equal)
+        elif isinstance(self._less_equal, (Param, Table)):
+            output = u'%s <= %s' % (output, self._equal)
         elif self._is_null:
             output = u'%s IS NULL' % output
         elif self._is_not_null:
@@ -156,6 +184,77 @@ class AND(Condition):
 
 class OR(Condition):
     CONDITION = u'OR'
+
+
+class Aggregate(Base):
+    TYPE = None
+
+    def __init__(self, field, **kwargs):
+        if self.TYPE is None:
+            raise NotImplementedError()
+
+        if not field:
+            raise NotImplementedError()
+
+        self.field = field
+        self._as = kwargs.get('_as')
+        self._equal = kwargs.get('_equal')
+        self._greater = kwargs.get('_greater')
+        self._greater_equal = kwargs.get('_greater_equal')
+        self._less = kwargs.get('_less')
+        self._less_equal = kwargs.get('_less_equal')
+
+    def AS(self, alias):
+        self._as = alias
+        return self
+
+    def __eq__(self, other):
+        return self.__class__(self.field, _as=self._as, _equal=other)
+
+    def __gt__(self, other):
+        return self.__class__(self.field, _as=self._as, _greater=other)
+
+    def __ge__(self, other):
+        return self.__class__(self.field, _as=self._as, _greater_equal=other)
+
+    def __lt__(self, other):
+        return self.__class__(self.field, _as=self._as, _less=other)
+
+    def __le__(self, other):
+        return self.__class__(self.field, _as=self._as, _less_equal=other)
+
+    def to_string(self):
+        if not isinstance(self.field, Table):
+            raise NotImplementedError()
+
+        if not self.field.column:
+            output = u'%s(*)' % self.TYPE
+        else:
+            output = u'%s(%s)' % (self.TYPE, self.field)
+
+        if self._as is not None:
+            if isinstance(self._equal, (Param, Table)):
+                output = u'%s = %s' % (self._as, self._equal)
+            elif isinstance(self._greater, (Param, Table)):
+                output = u'%s > %s' % (self._as, self._greater)
+            elif isinstance(self._greater_equal, (Param, Table)):
+                output = u'%s >= %s' % (self._as, self._greater_equal)
+            elif isinstance(self._less, (Param, Table)):
+                output = u'%s < %s' % (self._as, self._less)
+            elif isinstance(self._less_equal, (Param, Table)):
+                output = u'%s <= %s' % (self._as, self._less_equal)
+            else:
+                output = u'%s AS %s' % (output, self._as)
+
+        return output
+
+
+class COUNT(Aggregate):
+    TYPE = u'COUNT'
+
+
+class SUM(Aggregate):
+    TYPE = u'SUM'
 
 
 class SELECT(Base):
@@ -240,6 +339,16 @@ class SELECT(Base):
         if self._where is not None:
             sections.append(
                 u'WHERE %s' % u' '.join([unicode(s) for s in self._where])
+            )
+
+        if self._group_by is not None:
+            sections.append(
+                u'GROUP BY %s' % u', '.join([unicode(s) for s in self._group_by])
+            )
+
+        if self._having is not None:
+            sections.append(
+                u'HAVING %s' % u' '.join([unicode(s) for s in self._having])
             )
 
         if self._order_by is not None:

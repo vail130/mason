@@ -3,7 +3,7 @@ from __future__ import print_function
 
 import unittest
 
-from norm import Table, Param, SELECT, AND, OR
+from norm import Table, Param, SELECT, AND, OR, COUNT, SUM
 
 
 class TheSelectClass(unittest.TestCase):
@@ -34,6 +34,32 @@ class TheSelectClass(unittest.TestCase):
             "ORDER BY purchases.datetime_purchased ASC",
             "LIMIT 10",
             "OFFSET 10",
+        ])
+
+        self.assertEqual(query, expected_query)
+
+    def test_returns_select_query_grouping_string(self):
+        purchases = Table('purchases')
+        start = Param('start')
+        end = Param('end')
+        min_category_sum = Param('min_category_sum')
+
+        num_purchases = COUNT(purchases).AS('num_purchases')
+        category_sum = SUM(purchases.product_price).AS('category_sum')
+        query = str(
+            SELECT(purchases.category, category_sum, num_purchases)
+                .FROM(purchases)
+                .WHERE(purchases.datetime_purchased.BETWEEN(start).AND(end))
+                .GROUP_BY(purchases.category)
+                .HAVING(category_sum > min_category_sum)
+        )
+
+        expected_query = '\n'.join([
+            "SELECT purchases.category, SUM(purchases.product_price) AS category_sum, COUNT(*) AS num_purchases",
+            "FROM purchases",
+            "WHERE purchases.datetime_purchased BETWEEN %(start)s AND %(end)s",
+            "GROUP BY purchases.category",
+            "HAVING category_sum > %(min_category_sum)s",
         ])
 
         self.assertEqual(query, expected_query)
