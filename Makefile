@@ -1,4 +1,4 @@
 test:
-	nosetests
+	nosetests $$suite
 
 .PHONY: test

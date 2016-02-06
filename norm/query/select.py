@@ -1,8 +1,8 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-from norm.table import Table
 from norm.query.base import Query
+from norm.sub_query import SubQuery
 
 
 class SELECT(Query):
@@ -20,7 +20,7 @@ class SELECT(Query):
         self._as = None
 
     def AS(self, alias):
-        return Table(alias, subquery=self)
+        return SubQuery(alias, self)
 
     def FROM(self, *args):
         self._from = args
@@ -76,7 +76,7 @@ class SELECT(Query):
         self._offset = offset
         return self
 
-    def to_string(self, nest_level=0):
+    def _to_string(self, nest_level=0):
         indent = u'\t' * nest_level
         sections = [
             indent + u'SELECT %s' % u', '.join([unicode(s) for s in self._select]),

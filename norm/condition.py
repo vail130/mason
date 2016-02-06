@@ -3,8 +3,6 @@ from __future__ import print_function
 
 from norm.base import Base
 
-__ALL__ = ['AND', 'OR']
-
 
 class Condition(Base):
     CONDITION = None
@@ -18,11 +16,11 @@ class Condition(Base):
 
         self.conditions = args
 
-    def to_string(self, nest_level=0):
+    def _to_string(self, nest_level=0):
         condition_strings = []
         for c in self.conditions:
             if isinstance(c, Condition):
-                condition_strings.append(c.to_string(nest_level=nest_level + 1))
+                condition_strings.append(c._to_string(nest_level=nest_level + 1))
             else:
                 condition_strings.append(unicode(c))
 

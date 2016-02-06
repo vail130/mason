@@ -5,5 +5,5 @@ from norm.base import Base
 
 
 class Query(Base):
-    def to_string(self, nest_level=0):
+    def _to_string(self, nest_level=0):
         raise NotImplementedError()

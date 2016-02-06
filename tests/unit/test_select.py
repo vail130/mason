@@ -3,7 +3,7 @@ from __future__ import print_function
 
 import unittest
 
-from norm import Param, ANY, SELECT, COUNT, SUM, AND, OR, Table, NUMERIC, DATE
+from norm import Param, ANY, SELECT, COUNT, SUM, AND, OR, Table, NUMERIC, DATE, COALESCE
 
 
 class TheSelectClass(unittest.TestCase):
@@ -48,9 +48,10 @@ class TheSelectClass(unittest.TestCase):
         min_category_sum = Param('min_category_sum')
 
         num_purchases = COUNT(purchases).AS('num_purchases')
-        category_sum = SUM(purchases.product_price).AS('category_sum')
+        category_percent = (SUM(COALESCE(purchases.product_price, 0)) / 100.0).AS('category_percent')
+        category_sum = SUM(COALESCE(purchases.product_price, 0)).AS('category_sum')
         query = str(
-            SELECT(purchases.category, category_sum, num_purchases)
+            SELECT(purchases.category, category_percent, num_purchases)
                 .FROM(purchases)
                 .WHERE(purchases.datetime_purchased.BETWEEN(start).AND(end))
                 .GROUP_BY(purchases.category)
@@ -58,7 +59,9 @@ class TheSelectClass(unittest.TestCase):
         )
 
         expected_query = '\n'.join([
-            "SELECT purchases.category, SUM(purchases.product_price) AS category_sum, COUNT(*) AS num_purchases",
+            "SELECT purchases.category, "
+            "(SUM(COALESCE(purchases.product_price, 0)) / 100.0) AS category_percent, "
+            "COUNT(*) AS num_purchases",
             "FROM purchases",
             "WHERE purchases.datetime_purchased BETWEEN %(start)s AND %(end)s",
             "GROUP BY purchases.category",

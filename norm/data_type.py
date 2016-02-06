@@ -3,8 +3,6 @@ from __future__ import print_function
 
 from norm.base import Base
 
-__ALL__ = ['NUMERIC', 'DATE', 'TIMESTAMP', 'DECIMAL', 'INTEGER']
-
 
 class DataType(Base):
     TYPE = None
@@ -13,7 +11,7 @@ class DataType(Base):
         self.field = field
         self.args = args
 
-    def to_string(self):
+    def _to_string(self):
         output = u'(%s)::%s' % (self.field, self.TYPE)
         if self.args:
             output = u'%s(%s)' % (output, u', '.join([unicode(a) for a in self.args]))
