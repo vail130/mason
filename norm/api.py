@@ -10,9 +10,10 @@ class Base(object):
 
 
 class Table(Base):
-    def __init__(self, name, column=None):
+    def __init__(self, name, column=None, subquery=None):
         self.name = name
         self.column = column
+        self.subquery = subquery
 
         self._between_start = None
         self._between_end = None
@@ -116,6 +117,8 @@ class Table(Base):
 
         if self.column:
             output = u'%s.%s' % (output, self.column)
+        elif self.subquery is not None:
+            output = u'(\n%s\n) AS %s' % (self.subquery.to_string(nest_level=1), output)
 
         # Mutually exclusive cases
         if self._as is not None:
@@ -156,6 +159,11 @@ class Param(Base):
         return u'%(' + unicode(self.name) + u')s'
 
 
+class ANY(Param):
+    def to_string(self):
+        return u'ANY(%s)' % self.name
+
+
 class Condition(Base):
     CONDITION = None
 
@@ -168,14 +176,21 @@ class Condition(Base):
 
         self.conditions = args
 
-    def to_string(self):
-        output = self.CONDITION
-        condition_string = u' '.join([unicode(c) for c in self.conditions])
+    def to_string(self, nest_level=0):
+        condition_strings = []
+        for c in self.conditions:
+            if isinstance(c, Condition):
+                condition_strings.append(c.to_string(nest_level=nest_level+1))
+            else:
+                condition_strings.append(unicode(c))
 
-        if len(self.conditions) == 1:
-            return u'%s %s' % (output, condition_string)
-        else:
-            return u'%s (%s)' % (output, condition_string)
+        join_string = u' %s ' % self.CONDITION
+        output = join_string.join(condition_strings)
+
+        if nest_level and len(self.conditions) > 1:
+            output = u'(%s)' % output
+
+        return output
 
 
 class AND(Condition):
@@ -269,6 +284,10 @@ class SELECT(Base):
         self._order_by = None
         self._limit = None
         self._offset = None
+        self._as = None
+
+    def AS(self, alias):
+        return Table(alias, subquery=self)
 
     def FROM(self, *args):
         self._from = args
@@ -324,46 +343,47 @@ class SELECT(Base):
         self._offset = offset
         return self
 
-    def to_string(self):
+    def to_string(self, nest_level=0):
+        indent = u'\t' * nest_level
         sections = [
-            u'SELECT %s' % u', '.join([unicode(s) for s in self._select]),
-            u'FROM %s' % u', '.join([unicode(s) for s in self._from]),
+            indent + u'SELECT %s' % u', '.join([unicode(s) for s in self._select]),
+            indent + u'FROM %s' % u', '.join([unicode(s) for s in self._from]),
         ]
 
         if self._joins:
             for join in self._joins:
                 sections.append(
-                    u'%s JOIN %s' % (join[0], join[1])
+                    indent + u'%s JOIN %s' % (join[0], join[1])
                 )
 
         if self._where is not None:
             sections.append(
-                u'WHERE %s' % u' '.join([unicode(s) for s in self._where])
+                indent + u'WHERE %s' % u' '.join([unicode(s) for s in self._where])
             )
 
         if self._group_by is not None:
             sections.append(
-                u'GROUP BY %s' % u', '.join([unicode(s) for s in self._group_by])
+                indent + u'GROUP BY %s' % u', '.join([unicode(s) for s in self._group_by])
             )
 
         if self._having is not None:
             sections.append(
-                u'HAVING %s' % u' '.join([unicode(s) for s in self._having])
+                indent + u'HAVING %s' % u' '.join([unicode(s) for s in self._having])
             )
 
         if self._order_by is not None:
             sections.append(
-                u'ORDER BY %s' % u' '.join([unicode(s) for s in self._order_by])
+                indent + u'ORDER BY %s' % u' '.join([unicode(s) for s in self._order_by])
             )
 
         if self._limit is not None:
             sections.append(
-                u'LIMIT %s' % self._limit
+                indent + u'LIMIT %s' % self._limit
             )
 
             if self._offset is not None:
                 sections.append(
-                    u'OFFSET %s' % self._offset
+                    indent + u'OFFSET %s' % self._offset
                 )
 
         return u'\n'.join(sections)
