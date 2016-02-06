@@ -1,0 +1,4 @@
+test:
+	nosetests
+
+.PHONY: test
