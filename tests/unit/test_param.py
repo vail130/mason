@@ -9,18 +9,18 @@ class TheParamClassToStringMethod(unittest.TestCase):
     def test_works(self):
         param = Param('param')
 
-        self.assertEqual(unicode(param), '%(param)s')
+        self.assertEqual(str(param), '%(param)s')
 
 
 class TheAnyClassToStringMethod(unittest.TestCase):
     def test_works(self):
         param = ANY('param')
 
-        self.assertEqual(unicode(param), 'ANY(param)')
+        self.assertEqual(str(param), 'ANY(param)')
 
 
 class TheCoalesceClassToStringMethod(unittest.TestCase):
     def test_works(self):
         param = COALESCE('param', 0)
 
-        self.assertEqual(unicode(param), 'COALESCE(param, 0)')
+        self.assertEqual(str(param), 'COALESCE(param, 0)')

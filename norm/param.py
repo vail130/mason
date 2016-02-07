@@ -8,7 +8,7 @@ class Param(Base):
         self.arg = arg
 
     def _to_string(self):
-        return '%(' + unicode(self.arg) + ')s'
+        return '%%(%s)s' % self.arg
 
 
 class ANY(Param):

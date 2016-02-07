@@ -10,5 +10,5 @@ class TheCaseClassToStringMethod(unittest.TestCase):
         table = Table('table')
         param = Param('param')
 
-        self.assertEqual(unicode(CASE.WHEN(table.column == param).THEN(table.column2).ELSE(0).END),
+        self.assertEqual(str(CASE.WHEN(table.column == param).THEN(table.column2).ELSE(0).END),
                          'CASE WHEN table.column = %(param)s THEN table.column2 ELSE 0 END')

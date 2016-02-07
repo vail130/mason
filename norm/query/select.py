@@ -78,8 +78,8 @@ class SELECT(Query):
     def _to_string(self, nest_level=0):
         indent = '\t' * nest_level
         sections = [
-            indent + 'SELECT %s' % ', '.join([unicode(s) for s in self._select]),
-            indent + 'FROM %s' % ', '.join([unicode(s) for s in self._from]),
+            indent + 'SELECT %s' % ', '.join(['%s' % s for s in self._select]),
+            indent + 'FROM %s' % ', '.join(['%s' % s for s in self._from]),
         ]
 
         if self._joins:
@@ -90,22 +90,22 @@ class SELECT(Query):
 
         if self._where is not None:
             sections.append(
-                indent + 'WHERE %s' % ' '.join([unicode(s) for s in self._where])
+                indent + 'WHERE %s' % ' '.join(['%s' % s for s in self._where])
             )
 
         if self._group_by is not None:
             sections.append(
-                indent + 'GROUP BY %s' % ', '.join([unicode(s) for s in self._group_by])
+                indent + 'GROUP BY %s' % ', '.join(['%s' % s for s in self._group_by])
             )
 
         if self._having is not None:
             sections.append(
-                indent + 'HAVING %s' % ' '.join([unicode(s) for s in self._having])
+                indent + 'HAVING %s' % ' '.join(['%s' % s for s in self._having])
             )
 
         if self._order_by is not None:
             sections.append(
-                indent + 'ORDER BY %s' % ' '.join([unicode(s) for s in self._order_by])
+                indent + 'ORDER BY %s' % ' '.join(['%s' % s for s in self._order_by])
             )
 
         if self._limit is not None:

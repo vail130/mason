@@ -29,7 +29,7 @@ user_id = Param('user_id')
 start = Param('start')
 end = Param('end')
 
-query = unicode(
+query = str(
     SELECT(purchases.id, purchases.product_name, NUMERIC(purchases.product_price, 10, 2),
            DATE(purchases.datetime_purchased))
         .FROM(purchases)

@@ -9,4 +9,4 @@ class TheTableClassToStringMethod(unittest.TestCase):
     def test_works_by_itself(self):
         table = Table('table')
 
-        self.assertEqual(unicode(table), 'table')
+        self.assertEqual(str(table), 'table')

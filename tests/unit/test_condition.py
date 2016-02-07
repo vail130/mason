@@ -10,33 +10,33 @@ class TheConditionClassToStringMethod(unittest.TestCase):
         table = Table('table')
         param = Param('param')
 
-        self.assertEqual(unicode(AND(table.column == param)), 'table.column = %(param)s')
+        self.assertEqual(str(AND(table.column == param)), 'table.column = %(param)s')
 
     def test_and_works_with_two_arguments(self):
         table = Table('table')
         param = Param('param')
 
-        self.assertEqual(unicode(AND(table.column == param, table.column1 < param)),
+        self.assertEqual(str(AND(table.column == param, table.column1 < param)),
                          'table.column = %(param)s AND table.column1 < %(param)s')
 
     def test_or_works_with_one_argument(self):
         table = Table('table')
         param = Param('param')
 
-        self.assertEqual(unicode(OR(table.column == param)), 'table.column = %(param)s')
+        self.assertEqual(str(OR(table.column == param)), 'table.column = %(param)s')
 
     def test_or_works_with_two_arguments(self):
         table = Table('table')
         param = Param('param')
 
-        self.assertEqual(unicode(OR(table.column == param, table.column1 < param)),
+        self.assertEqual(str(OR(table.column == param, table.column1 < param)),
                          'table.column = %(param)s OR table.column1 < %(param)s')
 
     def test_and_and_or_work_together(self):
         table = Table('table')
         param = Param('param')
 
-        self.assertEqual(unicode(AND(table.column == param,
+        self.assertEqual(str(AND(table.column == param,
                                      OR(table.column1 < param,
                                         table.column2 > param))),
                          'table.column = %(param)s AND (table.column1 < %(param)s OR table.column2 > %(param)s)')

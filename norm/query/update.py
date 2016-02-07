@@ -35,12 +35,12 @@ class UPDATE(Base):
 
         if self._from is not None:
             sections.append(
-                'FROM %s' % ' '.join([unicode(s) for s in self._from])
+                'FROM %s' % ' '.join(['%s' % s for s in self._from])
             )
 
         if self._where is not None:
             sections.append(
-                'WHERE %s' % ' '.join([unicode(s) for s in self._where])
+                'WHERE %s' % ' '.join(['%s' % s for s in self._where])
             )
 
         return '\n'.join(sections)

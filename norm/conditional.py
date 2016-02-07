@@ -21,7 +21,7 @@ class Condition(Base):
             if isinstance(c, Condition):
                 condition_strings.append(c._to_string(nest_level=nest_level + 1))
             else:
-                condition_strings.append(unicode(c))
+                condition_strings.append('%s' % c)
 
         join_string = ' %s ' % self.CONDITION
         output = join_string.join(condition_strings)

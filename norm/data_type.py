@@ -13,7 +13,7 @@ class DataType(Base):
     def _to_string(self):
         output = '(%s)::%s' % (self.field, self.TYPE)
         if self.args:
-            output = '%s(%s)' % (output, ', '.join([unicode(a) for a in self.args]))
+            output = '%s(%s)' % (output, ', '.join(['%s' % a for a in self.args]))
         return output
 
 

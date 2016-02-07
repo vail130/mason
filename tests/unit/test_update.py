@@ -10,7 +10,7 @@ class TheUpdateClass(unittest.TestCase):
         purchases = Table('purchases')
         discount_percent = Param('discount_percent')
 
-        query = unicode(
+        query = str(
             UPDATE(purchases)
                 .SET(sale_price=purchases.product_price * discount_percent)
                 .WHERE(purchases.product_price > 200)
@@ -29,21 +29,21 @@ class TheUpdateClass(unittest.TestCase):
         new_price = Param('new_price')
         discount_percent = Param('discount_percent')
 
-        query = unicode(
+        query = str(
             UPDATE(purchases)
                 .SET(product_price=new_price,
                      sale_price=purchases.product_price * discount_percent)
                 .WHERE(purchases.product_price > 200)
         )
 
-        self.assertIn("purchases.product_price = %(new_price)s", query)
-        self.assertIn("purchases.sale_price = (purchases.product_price * %(discount_percent)s)", query)
+        self.assertTrue("purchases.product_price = %(new_price)s" in query)
+        self.assertTrue("purchases.sale_price = (purchases.product_price * %(discount_percent)s)" in query)
 
     def test_returns_string_for_update_query_with_from(self):
         purchases = Table('purchases')
         discounts = Table('discounts')
 
-        query = unicode(
+        query = str(
             UPDATE(purchases)
                 .SET(sale_price=purchases.product_price * discounts.discount_percent)
                 .FROM(discounts)
@@ -73,7 +73,7 @@ class TheUpdateClass(unittest.TestCase):
                 .AS('popular_products')
         )
 
-        query = unicode(
+        query = str(
             UPDATE(purchases)
                 .SET(sale_price=purchases.product_price * discount_percent)
                 .FROM(popular_products)

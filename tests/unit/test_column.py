@@ -20,38 +20,38 @@ class TheColumnClassToStringMethod(unittest.TestCase):
         self.assertEqual(Column('column', table=self.table).DESC._to_string(), 'table.column DESC')
 
     def test_works_with_between_comparison(self):
-        self.assertEqual(unicode(Column('column', table=self.table).BETWEEN(self.param).AND(self.param)),
+        self.assertEqual(str(Column('column', table=self.table).BETWEEN(self.param).AND(self.param)),
                          'table.column BETWEEN %(param)s AND %(param)s')
-        self.assertEqual(unicode(Column('column', table=self.table).BETWEEN(Column('column', table=self.table)).AND(
+        self.assertEqual(str(Column('column', table=self.table).BETWEEN(Column('column', table=self.table)).AND(
             Column('column', table=self.table))),
             'table.column BETWEEN table.column AND table.column')
 
     def test_works_with_math_operations(self):
-        self.assertEqual(unicode(Column('column', table=self.table) + 100.0), '(table.column + 100.0)')
-        self.assertEqual(unicode(Column('column', table=self.table) - 100.0), '(table.column - 100.0)')
-        self.assertEqual(unicode(Column('column', table=self.table) * 100.0), '(table.column * 100.0)')
-        self.assertEqual(unicode(Column('column', table=self.table) / 100.0), '(table.column / 100.0)')
+        self.assertEqual(str(Column('column', table=self.table) + 100.0), '(table.column + 100.0)')
+        self.assertEqual(str(Column('column', table=self.table) - 100.0), '(table.column - 100.0)')
+        self.assertEqual(str(Column('column', table=self.table) * 100.0), '(table.column * 100.0)')
+        self.assertEqual(str(Column('column', table=self.table) / 100.0), '(table.column / 100.0)')
 
-        self.assertEqual(unicode(Column('column', table=self.table) + 100), '(table.column + 100)')
-        self.assertEqual(unicode(Column('column', table=self.table) + self.param), '(table.column + %(param)s)')
+        self.assertEqual(str(Column('column', table=self.table) + 100), '(table.column + 100)')
+        self.assertEqual(str(Column('column', table=self.table) + self.param), '(table.column + %(param)s)')
 
     def test_works_with_comparisons(self):
-        self.assertEqual(unicode(Column('column', table=self.table) == 100.0), 'table.column = 100.0')
-        self.assertEqual(unicode(Column('column', table=self.table) != 100.0), 'table.column <> 100.0')
-        self.assertEqual(unicode(Column('column', table=self.table) > 100.0), 'table.column > 100.0')
-        self.assertEqual(unicode(Column('column', table=self.table) >= 100.0), 'table.column >= 100.0')
-        self.assertEqual(unicode(Column('column', table=self.table) < 100.0), 'table.column < 100.0')
-        self.assertEqual(unicode(Column('column', table=self.table) <= 100.0), 'table.column <= 100.0')
+        self.assertEqual(str(Column('column', table=self.table) == 100.0), 'table.column = 100.0')
+        self.assertEqual(str(Column('column', table=self.table) != 100.0), 'table.column <> 100.0')
+        self.assertEqual(str(Column('column', table=self.table) > 100.0), 'table.column > 100.0')
+        self.assertEqual(str(Column('column', table=self.table) >= 100.0), 'table.column >= 100.0')
+        self.assertEqual(str(Column('column', table=self.table) < 100.0), 'table.column < 100.0')
+        self.assertEqual(str(Column('column', table=self.table) <= 100.0), 'table.column <= 100.0')
 
-        self.assertEqual(unicode(Column('column', table=self.table) == 100), 'table.column = 100')
-        self.assertEqual(unicode(Column('column', table=self.table) == self.param), 'table.column = %(param)s')
+        self.assertEqual(str(Column('column', table=self.table) == 100), 'table.column = 100')
+        self.assertEqual(str(Column('column', table=self.table) == self.param), 'table.column = %(param)s')
 
     def test_works_with_in(self):
         subquery = SELECT(Column('column1', table=self.table)).FROM(self.table)
 
-        self.assertEqual(unicode(Column('column', table=self.table).IN(self.param)), 'table.column IN (%(param)s)')
-        self.assertEqual(unicode(Column('column', table=self.table).IN(subquery)),
+        self.assertEqual(str(Column('column', table=self.table).IN(self.param)), 'table.column IN (%(param)s)')
+        self.assertEqual(str(Column('column', table=self.table).IN(subquery)),
                          'table.column IN (\n\tSELECT table.column1\n\tFROM table\n)')
 
     def test_works_with_as(self):
-        self.assertEqual(unicode(Column('column', table=self.table).AS('alias')), 'table.column AS alias')
+        self.assertEqual(str(Column('column', table=self.table).AS('alias')), 'table.column AS alias')
