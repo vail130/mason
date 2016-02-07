@@ -1,11 +1,9 @@
-Norm
-====
+# Norm ![Build Status](https://travis-ci.org/vail130/norm.svg?branch=master)
 
 Norm is a nice, light-weight, SQL query generator. It lets you use objects instead of SQL strings without
 having an ORM take over your database model.
 
-Example
--------
+## Example
 ```python
 # Annoying
 query = """
@@ -45,8 +43,16 @@ query = unicode(
 )
 ```
 
-Run Tests
----------
+## Install
+```sh
+cd path/to/repos
+git clone git@github.com:vail130/norm.git
+cd norm
+mkvirtualenv norm
+pip install -r requirements.txt
+```
+
+## Run Tests
 ```
 make test
 ```
