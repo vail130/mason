@@ -1,5 +1,4 @@
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, unicode_literals
 
 import unittest
 
@@ -12,4 +11,4 @@ class TheCaseClassToStringMethod(unittest.TestCase):
         param = Param('param')
 
         self.assertEqual(unicode(CASE.WHEN(table.column == param).THEN(table.column2).ELSE(0).END),
-                         u'CASE WHEN table.column = %(param)s THEN table.column2 ELSE 0 END')
+                         'CASE WHEN table.column = %(param)s THEN table.column2 ELSE 0 END')

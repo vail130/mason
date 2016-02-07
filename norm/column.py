@@ -43,6 +43,12 @@ class Column(Base):
         for key in self.math_args.viewkeys() & kwargs.viewkeys():
             self.math_args[key]['value'] = kwargs[key]
 
+    def __hash__(self):
+        if self._table is not None:
+            return hash('%s.%s' % (self._table._name, self._name))
+        else:
+            return hash('%s.%s' % (self._subquery._name, self._name))
+
     def __eq__(self, other):
         return self.__class__(self._name, self._table, self._subquery, equal=other)
 
