@@ -39,3 +39,29 @@ class AND(Condition):
 
 class OR(Condition):
     CONDITION = u'OR'
+
+
+class CASE(Base):
+    @classmethod
+    def WHEN(cls, condition):
+        return cls(condition)
+
+    def __init__(self, condition):
+        self.condition = condition
+        self.positive = None
+        self.negative = None
+
+    def THEN(self, positive):
+        self.positive = positive
+        return self
+
+    def ELSE(self, negative):
+        self.negative = negative
+        return self
+
+    @property
+    def END(self):
+        return self
+
+    def _to_string(self):
+        return u'CASE WHEN %s THEN %s ELSE %s END' % (self.condition, self.positive, self.negative)
