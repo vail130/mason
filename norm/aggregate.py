@@ -21,7 +21,7 @@ class Aggregate(Base):
             'less': {'symbol': '<', 'value': None},
             'less_equal': {'symbol': '<=', 'value': None},
         }
-        for key in self.comparison_args.viewkeys() & kwargs.viewkeys():
+        for key in set(self.comparison_args.keys()) & set(kwargs.keys()):
             self.comparison_args[key]['value'] = kwargs[key]
 
         self.math_args = {
@@ -30,7 +30,7 @@ class Aggregate(Base):
             'mul': {'symbol': '*', 'value': None},
             'div': {'symbol': '/', 'value': None},
         }
-        for key in self.math_args.viewkeys() & kwargs.viewkeys():
+        for key in set(self.math_args.keys()) & set(kwargs.keys()):
             self.math_args[key]['value'] = kwargs[key]
 
     def AS(self, alias):
