@@ -1,4 +1,4 @@
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import, unicode_literals, division
 
 from norm.base import Base
 from norm.query.base import Query
@@ -74,6 +74,9 @@ class Column(Base):
         return self.__class__(self._name, self._table, self._subquery, sub=other)
 
     def __div__(self, other):
+        return self.__class__(self._name, self._table, self._subquery, div=other)
+
+    def __truediv__(self, other):
         return self.__class__(self._name, self._table, self._subquery, div=other)
 
     def __mul__(self, other):

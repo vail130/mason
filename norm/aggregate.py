@@ -1,4 +1,4 @@
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import, unicode_literals, division
 
 from norm.base import Base
 
@@ -62,6 +62,9 @@ class Aggregate(Base):
         return self.__class__(self.field, _as=self._as, sub=other)
 
     def __div__(self, other):
+        return self.__class__(self.field, _as=self._as, div=other)
+
+    def __truediv__(self, other):
         return self.__class__(self.field, _as=self._as, div=other)
 
     def __mul__(self, other):

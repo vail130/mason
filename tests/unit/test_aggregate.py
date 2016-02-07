@@ -8,11 +8,10 @@ from norm import SUM, COALESCE, Table, Param, COUNT
 class TheAggregateClass(unittest.TestCase):
     def test_works_with_coalesce_and_division_with_alias(self):
         table = Table('table')
-        one_hundred = Param('one_hundred')
-        category_percent = (SUM(COALESCE(table.column, 0)) / one_hundred).AS('category_percent')
+        category_percent = (SUM(COALESCE(table.column, 0)) / 100.0).AS('category_percent')
 
         self.assertEqual(str(category_percent),
-                         '(SUM(COALESCE(table.column, 0)) / %(one_hundred)s) AS category_percent')
+                         '(SUM(COALESCE(table.column, 0)) / 100.0) AS category_percent')
 
 
 class TheAggregateClassToStringMethod(unittest.TestCase):
