@@ -25,6 +25,10 @@ class TIMESTAMP(DataType):
     TYPE = 'TIMESTAMP'
 
 
+class INTERVAL(DataType):
+    TYPE = 'INTERVAL'
+
+
 class NUMERIC(DataType):
     TYPE = 'NUMERIC'
 

@@ -7,7 +7,7 @@ from norm import Table, Param, CASE
 
 
 class TheCaseClassToStringMethod(unittest.TestCase):
-    def test_and_works_with_one_argument(self):
+    def test_works(self):
         table = Table('table')
         param = Param('param')
 
