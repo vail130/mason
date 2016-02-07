@@ -9,27 +9,39 @@ Example
 ```python
 # Annoying
 query = """
-SELECT purchases.id, purchases.product_name, purchases.product_price
+SELECT purchases.id,
+    purchases.product_name,
+    (purchases.product_price)::NUMERIC(10, 2),
+    (purchases.datetime_purchased)::DATE
 FROM purchases
-WHERE purchases.datetime_purchased BETWEEN %(start)s AND %(end)s
+INNER JOIN users ON purchases.purchaser_id = users.user_id
+WHERE purchases.datetime_purchased BETWEEN %(start)s AND %(end)s 
     AND (purchases.purchaser_id = %(user_id)s OR purchases.purchaser_id IS NULL)
 ORDER BY purchases.datetime_purchased ASC
+LIMIT 10
+OFFSET 10
 """
 
 # Easy :)
-from norm import Table, Param, SELECT, AND, OR
+from norm import Table, Param, SELECT, AND, OR, DATE, NUMERIC
 
-p = Table('purchases')
+purchases = Table('purchases')
+users = Table('users')
 user_id = Param('user_id')
 start = Param('start')
 end = Param('end')
 
-query = str(
-    SELECT(p.id, p.product_name, p.product_price)
-        .FROM(p)
-        .WHERE(p.datetime_purchased.BETWEEN(start).AND(end),
-               AND(p.purchaser_id == user_id, OR(p.purchaser_id.IS_NULL)))
-        .ORDER_BY(p.datetime_purchased.ASC)
+query = unicode(
+    SELECT(purchases.id, purchases.product_name, NUMERIC(purchases.product_price, 10, 2),
+           DATE(purchases.datetime_purchased))
+        .FROM(purchases)
+        .INNER_JOIN(users.ON(purchases.purchaser_id == users.user_id))
+        .WHERE(AND(purchases.datetime_purchased.BETWEEN(start).AND(end),
+                   OR(purchases.purchaser_id == user_id,
+                      purchases.purchaser_id.IS_NULL)))
+        .ORDER_BY(purchases.datetime_purchased.ASC)
+        .LIMIT(10)
+        .OFFSET(10)
 )
 ```
 
