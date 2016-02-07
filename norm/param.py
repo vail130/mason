@@ -1,5 +1,4 @@
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, unicode_literals
 
 from norm.base import Base
 
@@ -9,12 +8,12 @@ class Param(Base):
         self.arg = arg
 
     def _to_string(self):
-        return u'%(' + unicode(self.arg) + u')s'
+        return '%(' + unicode(self.arg) + ')s'
 
 
 class ANY(Param):
     def _to_string(self):
-        return u'ANY(%s)' % self.arg
+        return 'ANY(%s)' % self.arg
 
 
 class COALESCE(Param):
@@ -26,4 +25,4 @@ class COALESCE(Param):
         return getattr(self.arg, item)
 
     def _to_string(self):
-        return u'COALESCE(%s, %s)' % (self.arg, self.default_value)
+        return 'COALESCE(%s, %s)' % (self.arg, self.default_value)

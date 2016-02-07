@@ -1,5 +1,4 @@
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, unicode_literals
 
 from norm.query.base import Query
 from norm.sub_query import SubQuery
@@ -27,23 +26,23 @@ class SELECT(Query):
         return self
 
     def INNER_JOIN(self, join):
-        self._joins.append((u'INNER', join))
+        self._joins.append(('INNER', join))
         return self
 
     def OUTER_JOIN(self, join):
-        self._joins.append((u'OUTER', join))
+        self._joins.append(('OUTER', join))
         return self
 
     def FULL_OUTER_JOIN(self, join):
-        self._joins.append((u'FULL OUTER', join))
+        self._joins.append(('FULL OUTER', join))
         return self
 
     def LEFT_OUTER_JOIN(self, join):
-        self._joins.append((u'LEFT OUTER', join))
+        self._joins.append(('LEFT OUTER', join))
         return self
 
     def RIGHT_OUTER_JOIN(self, join):
-        self._joins.append((u'RIGHT OUTER', join))
+        self._joins.append(('RIGHT OUTER', join))
         return self
 
     def WHERE(self, *args):
@@ -64,59 +63,59 @@ class SELECT(Query):
 
     def LIMIT(self, limit):
         if not isinstance(limit, int):
-            raise ValueError(u'LIMIT must be an integer, got "%s"' % limit)
+            raise ValueError('LIMIT must be an integer, got "%s"' % limit)
 
         self._limit = limit
         return self
 
     def OFFSET(self, offset):
         if not isinstance(offset, int):
-            raise ValueError(u'OFFSET must be an integer, got "%s"' % offset)
+            raise ValueError('OFFSET must be an integer, got "%s"' % offset)
 
         self._offset = offset
         return self
 
     def _to_string(self, nest_level=0):
-        indent = u'\t' * nest_level
+        indent = '\t' * nest_level
         sections = [
-            indent + u'SELECT %s' % u', '.join([unicode(s) for s in self._select]),
-            indent + u'FROM %s' % u', '.join([unicode(s) for s in self._from]),
+            indent + 'SELECT %s' % ', '.join([unicode(s) for s in self._select]),
+            indent + 'FROM %s' % ', '.join([unicode(s) for s in self._from]),
         ]
 
         if self._joins:
             for join in self._joins:
                 sections.append(
-                    indent + u'%s JOIN %s' % (join[0], join[1])
+                    indent + '%s JOIN %s' % (join[0], join[1])
                 )
 
         if self._where is not None:
             sections.append(
-                indent + u'WHERE %s' % u' '.join([unicode(s) for s in self._where])
+                indent + 'WHERE %s' % ' '.join([unicode(s) for s in self._where])
             )
 
         if self._group_by is not None:
             sections.append(
-                indent + u'GROUP BY %s' % u', '.join([unicode(s) for s in self._group_by])
+                indent + 'GROUP BY %s' % ', '.join([unicode(s) for s in self._group_by])
             )
 
         if self._having is not None:
             sections.append(
-                indent + u'HAVING %s' % u' '.join([unicode(s) for s in self._having])
+                indent + 'HAVING %s' % ' '.join([unicode(s) for s in self._having])
             )
 
         if self._order_by is not None:
             sections.append(
-                indent + u'ORDER BY %s' % u' '.join([unicode(s) for s in self._order_by])
+                indent + 'ORDER BY %s' % ' '.join([unicode(s) for s in self._order_by])
             )
 
         if self._limit is not None:
             sections.append(
-                indent + u'LIMIT %s' % self._limit
+                indent + 'LIMIT %s' % self._limit
             )
 
             if self._offset is not None:
                 sections.append(
-                    indent + u'OFFSET %s' % self._offset
+                    indent + 'OFFSET %s' % self._offset
                 )
 
-        return u'\n'.join(sections)
+        return '\n'.join(sections)

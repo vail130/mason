@@ -1,5 +1,4 @@
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, unicode_literals
 
 from norm.base import Base
 
@@ -24,21 +23,21 @@ class Condition(Base):
             else:
                 condition_strings.append(unicode(c))
 
-        join_string = u' %s ' % self.CONDITION
+        join_string = ' %s ' % self.CONDITION
         output = join_string.join(condition_strings)
 
         if nest_level and len(self.conditions) > 1:
-            output = u'(%s)' % output
+            output = '(%s)' % output
 
         return output
 
 
 class AND(Condition):
-    CONDITION = u'AND'
+    CONDITION = 'AND'
 
 
 class OR(Condition):
-    CONDITION = u'OR'
+    CONDITION = 'OR'
 
 
 class CASE(Base):
@@ -64,4 +63,4 @@ class CASE(Base):
         return self
 
     def _to_string(self):
-        return u'CASE WHEN %s THEN %s ELSE %s END' % (self.condition, self.positive, self.negative)
+        return 'CASE WHEN %s THEN %s ELSE %s END' % (self.condition, self.positive, self.negative)

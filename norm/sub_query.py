@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from norm.base import Base
 from norm.column import Column
 
@@ -18,11 +20,11 @@ class SubQuery(Base):
         return self
 
     def _to_string(self):
-        output = u'(\n%s\n) AS %s' % (self._subquery._to_string(nest_level=1), self._name)
+        output = '(\n%s\n) AS %s' % (self._subquery._to_string(nest_level=1), self._name)
 
         if self._on is not None:
-            output = u'%s ON' % output
+            output = '%s ON' % output
             for on in self._on:
-                output = u'%s %s' % (output, on)
+                output = '%s %s' % (output, on)
 
         return output

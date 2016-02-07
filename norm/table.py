@@ -1,5 +1,4 @@
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, unicode_literals
 
 from norm.base import Base
 from norm.column import Column
@@ -24,13 +23,13 @@ class Table(Base):
         return self
 
     def _to_string(self):
-        output = u'%s' % self._name
+        output = '%s' % self._name
 
         if self._as is not None:
-            output = u'%s AS %s' % (output, self._as)
+            output = '%s AS %s' % (output, self._as)
         elif self._on is not None:
-            output = u'%s ON' % output
+            output = '%s ON' % output
             for on in self._on:
-                output = u'%s %s' % (output, on)
+                output = '%s %s' % (output, on)
 
         return output

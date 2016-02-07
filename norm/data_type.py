@@ -1,5 +1,4 @@
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, unicode_literals
 
 from norm.base import Base
 
@@ -12,27 +11,27 @@ class DataType(Base):
         self.args = args
 
     def _to_string(self):
-        output = u'(%s)::%s' % (self.field, self.TYPE)
+        output = '(%s)::%s' % (self.field, self.TYPE)
         if self.args:
-            output = u'%s(%s)' % (output, u', '.join([unicode(a) for a in self.args]))
+            output = '%s(%s)' % (output, ', '.join([unicode(a) for a in self.args]))
         return output
 
 
 class DATE(DataType):
-    TYPE = u'DATE'
+    TYPE = 'DATE'
 
 
 class TIMESTAMP(DataType):
-    TYPE = u'TIMESTAMP'
+    TYPE = 'TIMESTAMP'
 
 
 class NUMERIC(DataType):
-    TYPE = u'NUMERIC'
+    TYPE = 'NUMERIC'
 
 
 class DECIMAL(DataType):
-    TYPE = u'DECIMAL'
+    TYPE = 'DECIMAL'
 
 
 class INTEGER(DataType):
-    TYPE = u'INTEGER'
+    TYPE = 'INTEGER'

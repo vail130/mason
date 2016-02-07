@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from norm.base import Base
 from norm.query.base import Query
 
@@ -22,21 +24,21 @@ class Column(Base):
         self._desc = False
 
         self.comparison_args = {
-            'equal': {'symbol': u'=', 'value': None},
-            'not_equal': {'symbol': u'<>', 'value': None},
-            'greater': {'symbol': u'>', 'value': None},
-            'greater_equal': {'symbol': u'>=', 'value': None},
-            'less': {'symbol': u'<', 'value': None},
-            'less_equal': {'symbol': u'<=', 'value': None},
+            'equal': {'symbol': '=', 'value': None},
+            'not_equal': {'symbol': '<>', 'value': None},
+            'greater': {'symbol': '>', 'value': None},
+            'greater_equal': {'symbol': '>=', 'value': None},
+            'less': {'symbol': '<', 'value': None},
+            'less_equal': {'symbol': '<=', 'value': None},
         }
         for key in self.comparison_args.viewkeys() & kwargs.viewkeys():
             self.comparison_args[key]['value'] = kwargs[key]
 
         self.math_args = {
-            'add': {'symbol': u'+', 'value': None},
-            'sub': {'symbol': u'-', 'value': None},
-            'mul': {'symbol': u'*', 'value': None},
-            'div': {'symbol': u'/', 'value': None},
+            'add': {'symbol': '+', 'value': None},
+            'sub': {'symbol': '-', 'value': None},
+            'mul': {'symbol': '*', 'value': None},
+            'div': {'symbol': '/', 'value': None},
         }
         for key in self.math_args.viewkeys() & kwargs.viewkeys():
             self.math_args[key]['value'] = kwargs[key]
@@ -76,12 +78,18 @@ class Column(Base):
         return self
 
     def BETWEEN(self, start):
+        if self._between_start:
+            raise RuntimeError('must call BETWEEN only once')
+
+        if self._between_end:
+            raise RuntimeError('must call BETWEEN before AND')
+
         self._between_start = start
         return self
 
     def AND(self, end):
         if not self._between_start:
-            raise NotImplementedError()
+            raise RuntimeError('must call BETWEEN before AND')
 
         self._between_end = end
         return self
@@ -89,7 +97,7 @@ class Column(Base):
     @property
     def IS_NULL(self):
         if self._is_not_null:
-            raise NotImplementedError()
+            raise RuntimeError('cannot call IS_NULL and IS_NOT_NULL on the same column')
 
         self._is_null = True
         return self
@@ -97,7 +105,7 @@ class Column(Base):
     @property
     def IS_NOT_NULL(self):
         if self._is_null:
-            raise NotImplementedError()
+            raise RuntimeError('cannot call IS_NULL and IS_NOT_NULL on the same column')
 
         self._is_not_null = True
         return self
@@ -105,7 +113,7 @@ class Column(Base):
     @property
     def ASC(self):
         if self._desc:
-            raise NotImplementedError()
+            raise RuntimeError('cannot call ASC and DESC on the same column')
 
         self._asc = True
         return self
@@ -113,7 +121,7 @@ class Column(Base):
     @property
     def DESC(self):
         if self._asc:
-            raise NotImplementedError()
+            raise RuntimeError('cannot call ASC and DESC on the same column')
 
         self._desc = True
         return self
@@ -123,13 +131,13 @@ class Column(Base):
         return self
 
     def _to_string(self):
-        if self._between_start and not self._between_end:
-            raise NotImplementedError()
+        if (self._between_start and not self._between_end) or (not self._between_start and self._between_end):
+            raise RuntimeError('must call both BETWEEN and AND together')
 
         if self._table is not None:
-            output = u'%s.%s' % (self._table._name, self._name)
+            output = '%s.%s' % (self._table._name, self._name)
         elif self._subquery is not None:
-            output = u'%s.%s' % (self._subquery._name, self._name)
+            output = '%s.%s' % (self._subquery._name, self._name)
         else:
             raise RuntimeError('Column instance must have associated Table or SubQuery')
 
@@ -138,34 +146,34 @@ class Column(Base):
 
         for math_arg in self.math_args.itervalues():
             if math_arg['value'] is not None:
-                output = u'(%s %s %s)' % (output, math_arg['symbol'], math_arg['value'])
+                output = '(%s %s %s)' % (output, math_arg['symbol'], math_arg['value'])
                 is_math_op = True
                 break
 
         if not is_math_op:
             for comp_arg in self.comparison_args.itervalues():
                 if comp_arg['value'] is not None:
-                    output = u'%s %s %s' % (self._as or output, comp_arg['symbol'], comp_arg['value'])
+                    output = '%s %s %s' % (self._as or output, comp_arg['symbol'], comp_arg['value'])
                     is_comparison = True
                     break
 
         if not is_math_op and not is_comparison:
             if self._in is not None:
                 if isinstance(self._in, Query):
-                    output = u'%s IN (\n%s\n)' % (output, self._in._to_string(nest_level=1))
+                    output = '%s IN (\n%s\n)' % (output, self._in._to_string(nest_level=1))
                 else:
-                    output = u'%s IN (%s)' % (output, self._in)
+                    output = '%s IN (%s)' % (output, self._in)
             elif self._between_start and self._between_end:
-                output = u'%s BETWEEN %s AND %s' % (output, self._between_start, self._between_end)
+                output = '%s BETWEEN %s AND %s' % (output, self._between_start, self._between_end)
             elif self._is_null:
-                output = u'%s IS NULL' % output
+                output = '%s IS NULL' % output
             elif self._is_not_null:
-                output = u'%s IS NOT NULL' % output
+                output = '%s IS NOT NULL' % output
             elif self._asc:
-                output = u'%s ASC' % output
+                output = '%s ASC' % output
             elif self._desc:
-                output = u'%s DESC' % output
+                output = '%s DESC' % output
             elif self._as is not None:
-                output = u'%s AS %s' % (output, self._as)
+                output = '%s AS %s' % (output, self._as)
 
         return output

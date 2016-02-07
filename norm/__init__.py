@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from norm.aggregate import COUNT, SUM, MAX, MIN
 from norm.conditional import AND, OR, CASE
