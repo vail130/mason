@@ -45,13 +45,14 @@ class TheSelectClass(unittest.TestCase):
         start = Param('start')
         end = Param('end')
         min_category_sum = Param('min_category_sum')
+        one_hundred = Param('one_hundred')
 
         num_purchases = COUNT(purchases).AS('num_purchases')
         category_percent = (SUM(
             CASE.WHEN(purchases.is_valid)
             .THEN(COALESCE(purchases.product_price, 0))
             .ELSE(0).END
-        ) / 100.0).AS('category_percent')
+        ) / one_hundred).AS('category_percent')
         category_sum = SUM(COALESCE(purchases.product_price, 0)).AS('category_sum')
         query = str(
             SELECT(purchases.category, category_percent, num_purchases)
@@ -64,7 +65,7 @@ class TheSelectClass(unittest.TestCase):
         expected_query = '\n'.join([
             ("SELECT purchases.category, "
              "(SUM(CASE WHEN purchases.is_valid "
-             "THEN COALESCE(purchases.product_price, 0) ELSE 0 END) / 100.0) AS category_percent, "
+             "THEN COALESCE(purchases.product_price, 0) ELSE 0 END) / %(one_hundred)s) AS category_percent, "
              "COUNT(*) AS num_purchases"),
             "FROM purchases",
             "WHERE purchases.datetime_purchased BETWEEN %(start)s AND %(end)s",

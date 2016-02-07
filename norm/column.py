@@ -150,14 +150,14 @@ class Column(Base):
         is_math_op = False
         is_comparison = False
 
-        for math_arg in self.math_args.itervalues():
+        for math_arg in self.math_args.values():
             if math_arg['value'] is not None:
                 output = '(%s %s %s)' % (output, math_arg['symbol'], math_arg['value'])
                 is_math_op = True
                 break
 
         if not is_math_op:
-            for comp_arg in self.comparison_args.itervalues():
+            for comp_arg in self.comparison_args.values():
                 if comp_arg['value'] is not None:
                     output = '%s %s %s' % (self._as or output, comp_arg['symbol'], comp_arg['value'])
                     is_comparison = True

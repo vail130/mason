@@ -73,13 +73,13 @@ class Aggregate(Base):
         else:
             output = '%s(%s)' % (self.TYPE, self.field)
 
-        for math_arg in self.math_args.itervalues():
+        for math_arg in self.math_args.values():
             if math_arg['value'] is not None:
                 output = '(%s %s %s)' % (output, math_arg['symbol'], math_arg['value'])
                 break
 
         is_comparison = False
-        for comp_arg in self.comparison_args.itervalues():
+        for comp_arg in self.comparison_args.values():
             if comp_arg['value'] is not None:
                 output = '%s %s %s' % (self._as or output, comp_arg['symbol'], comp_arg['value'])
                 is_comparison = True

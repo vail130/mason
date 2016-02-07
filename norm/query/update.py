@@ -25,7 +25,7 @@ class UPDATE(Base):
 
     def _to_string(self):
         set_expressions = []
-        for k, v in self._set.iteritems():
+        for k, v in self._set.items():
             set_expressions.append('%s.%s = %s' % (self._update, k, v))
 
         sections = [
