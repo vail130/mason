@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 import unittest
 
-from norm import Param, Table, UPDATE, AND
+from norm import Param, Table, UPDATE, AND, SELECT, COUNT
 
 
 class TheUpdateClass(unittest.TestCase):
@@ -56,6 +56,40 @@ class TheUpdateClass(unittest.TestCase):
             "SET purchases.sale_price = (purchases.product_price * discounts.discount_percent)",
             "FROM discounts",
             "WHERE purchases.product_price > 200 AND purchases.product_id = discounts.product_id",
+        ])
+
+        self.assertEqual(query, expected_query)
+
+    def test_returns_string_for_update_query_with_from_subquery(self):
+        purchases = Table('purchases')
+        discount_percent = Param('discount_percent')
+
+        num_purchases = COUNT(purchases).AS('num_purchases')
+        popular_products = (
+            SELECT(purchases.product_id, num_purchases)
+                .FROM(purchases)
+                .GROUP_BY(purchases.product_id)
+                .HAVING(num_purchases > 10)
+                .AS('popular_products')
+        )
+
+        query = unicode(
+            UPDATE(purchases)
+                .SET(sale_price=purchases.product_price * discount_percent)
+                .FROM(popular_products)
+                .WHERE(purchases.product_id == popular_products.product_id)
+        )
+
+        expected_query = '\n'.join([
+            "UPDATE purchases",
+            "SET purchases.sale_price = (purchases.product_price * %(discount_percent)s)",
+            "FROM (",
+            "\tSELECT purchases.product_id, COUNT(*) AS num_purchases",
+            "\tFROM purchases",
+            "\tGROUP BY purchases.product_id",
+            "\tHAVING num_purchases > 10",
+            ") AS popular_products",
+            "WHERE purchases.product_id = popular_products.product_id",
         ])
 
         self.assertEqual(query, expected_query)
