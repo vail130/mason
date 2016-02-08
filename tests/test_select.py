@@ -49,8 +49,8 @@ class TheSelectClass(unittest.TestCase):
         num_purchases = COUNT(purchases).AS('num_purchases')
         category_percent = (SUM(
             CASE.WHEN(purchases.is_valid)
-            .THEN(COALESCE(purchases.product_price, 0))
-            .ELSE(0).END
+                .THEN(COALESCE(purchases.product_price, 0))
+                .ELSE(0).END
         ) / 100.0).AS('category_percent')
         category_sum = SUM(COALESCE(purchases.product_price, 0)).AS('category_sum')
         query = str(
@@ -121,6 +121,31 @@ class TheSelectClass(unittest.TestCase):
             "\tSELECT categories.category",
             "\tFROM categories",
             ")",
+        ])
+
+        self.assertEqual(query, expected_query)
+
+    def test_returns_string_for_select_query_with_joins(self):
+        table = Table('table')
+
+        query = str(
+            SELECT('*')
+                .FROM(table)
+                .LEFT_OUTER_JOIN(table)
+                .RIGHT_OUTER_JOIN(table)
+                .FULL_OUTER_JOIN(table)
+                .OUTER_JOIN(table)
+                .LIMIT(10)
+        )
+
+        expected_query = '\n'.join([
+            "SELECT *",
+            "FROM table",
+            "LEFT OUTER JOIN table",
+            "RIGHT OUTER JOIN table",
+            "FULL OUTER JOIN table",
+            "OUTER JOIN table",
+            "LIMIT 10",
         ])
 
         self.assertEqual(query, expected_query)

@@ -23,15 +23,13 @@ class TheSumClassToStringMethod(unittest.TestCase):
         table = Table('table')
         category_percent = SUM(table.column)
 
-        self.assertEqual(str(category_percent),
-                         'SUM(table.column)')
+        self.assertEqual(str(category_percent), 'SUM(table.column)')
 
     def test_works_with_alias(self):
         table = Table('table')
         category_percent = SUM(table.column).AS('category_percent')
 
-        self.assertEqual(str(category_percent),
-                         'SUM(table.column) AS category_percent')
+        self.assertEqual(str(category_percent), 'SUM(table.column) AS category_percent')
 
     def test_works_with_math_operations(self):
         table = Table('table')

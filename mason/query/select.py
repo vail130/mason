@@ -62,16 +62,10 @@ class SELECT(Query):
         return self
 
     def LIMIT(self, limit):
-        if not isinstance(limit, int):
-            raise ValueError('LIMIT must be an integer, got "%s"' % limit)
-
         self._limit = limit
         return self
 
     def OFFSET(self, offset):
-        if not isinstance(offset, int):
-            raise ValueError('OFFSET must be an integer, got "%s"' % offset)
-
         self._offset = offset
         return self
 

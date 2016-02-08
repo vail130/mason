@@ -13,13 +13,11 @@ class TheUpdateClass(unittest.TestCase):
         query = str(
             UPDATE(purchases)
                 .SET(sale_price=purchases.product_price * discount_percent)
-                .WHERE(purchases.product_price > 200)
         )
 
         expected_query = '\n'.join([
             "UPDATE purchases",
             "SET purchases.sale_price = (purchases.product_price * %(discount_percent)s)",
-            "WHERE purchases.product_price > 200",
         ])
 
         self.assertEqual(query, expected_query)

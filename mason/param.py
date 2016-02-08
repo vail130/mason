@@ -21,8 +21,5 @@ class COALESCE(Param):
         super(COALESCE, self).__init__(arg)
         self.default_value = default_value
 
-    def __getattr__(self, item):
-        return getattr(self.arg, item)
-
     def _to_string(self):
         return 'COALESCE(%s, %s)' % (self.arg, self.default_value)
