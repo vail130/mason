@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 import unittest
 
-from norm import Param, ANY, SELECT, COUNT, SUM, AND, OR, Table, NUMERIC, DATE, COALESCE, CASE
+from mason import Param, ANY, SELECT, COUNT, SUM, AND, OR, Table, NUMERIC, DATE, COALESCE, CASE
 
 
 class TheSelectClass(unittest.TestCase):

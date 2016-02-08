@@ -35,14 +35,14 @@ if sys.argv[-1] == 'publish':
     sys.exit()
 
 packages = [
-    'norm',
-    'norm.query',
+    'mason',
+    'mason.query',
 ]
 
 requires = []
 test_requirements = ['nose>=1.3.7']
 
-with open('norm/__init__.py', 'r') as fd:
+with open('mason/__init__.py', 'r') as fd:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
@@ -53,16 +53,16 @@ with open('README.rst', 'r', 'utf-8') as f:
     readme = f.read()
 
 setup(
-    name='norm',
+    name='mason',
     version=version,
     description='Python SQL query generation without the ORM.',
     long_description=readme,
     author='Vail Gold',
     author_email='vail130@gmail.com',
-    url='https://github.com/vail130/norm',
+    url='https://github.com/vail130/mason',
     packages=packages,
     package_data={'': ['LICENSE']},
-    package_dir={'norm': 'norm'},
+    package_dir={'mason': 'mason'},
     include_package_data=True,
     install_requires=requires,
     license='MIT',

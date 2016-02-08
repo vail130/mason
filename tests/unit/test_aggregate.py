@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 import unittest
 
-from norm import SUM, COALESCE, Table, Param, COUNT
+from mason import SUM, COALESCE, Table, Param, COUNT
 
 
 class TheAggregateClass(unittest.TestCase):

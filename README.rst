@@ -1,9 +1,9 @@
-Norm
+Mason
 ====
 
-.. image:: https://travis-ci.org/vail130/norm.svg?branch=master
+.. image:: https://travis-ci.org/vail130/mason.svg?branch=master
 
-Norm is a nice, light-weight, SQL query generator. It lets you use objects instead of SQL strings without
+Mason is a nice, light-weight, SQL query builder. It lets you use objects instead of SQL strings without
 having an ORM take over your database model.
 
 Example
@@ -26,7 +26,7 @@ Example
     """
 
     # Convenient :)
-    from norm import Table, Param, SELECT, AND, OR, DATE, NUMERIC
+    from mason import Table, Param, SELECT, AND, OR, DATE, NUMERIC
 
     purchases = Table('purchases')
     users = Table('users')
@@ -52,14 +52,15 @@ Install
 -------
 .. code-block:: sh
 
-    cd path/to/repos
-    git clone git@github.com:vail130/norm.git
-    cd norm
-    mkvirtualenv norm
-    pip install -r requirements.txt
+    pip install mason
 
-Run Tests
----------
+Develop
+-------
 .. code-block:: sh
 
+    cd path/to/repos
+    git clone git@github.com:vail130/mason.git
+    cd mason
+    mkvirtualenv mason
+    pip install -r requirements.txt
     make test

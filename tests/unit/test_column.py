@@ -2,8 +2,8 @@ from __future__ import absolute_import, unicode_literals
 
 import unittest
 
-from norm import Table, Param, SELECT
-from norm.column import Column
+from mason import Table, Param, SELECT
+from mason.column import Column
 
 
 class TheColumnClassToStringMethod(unittest.TestCase):

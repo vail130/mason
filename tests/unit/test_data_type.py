@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 import unittest
 
-from norm import TIMESTAMP, DATE, INTERVAL, NUMERIC, DECIMAL, INTEGER
+from mason import TIMESTAMP, DATE, INTERVAL, NUMERIC, DECIMAL, INTEGER
 
 
 class TheTimestampClassToStringMethod(unittest.TestCase):
