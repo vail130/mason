@@ -30,7 +30,8 @@ class TheColumnClassToStringMethod(unittest.TestCase):
         self.assertEqual(str(Column('column', table=self.table) + 100.0), '(table.column + 100.0)')
         self.assertEqual(str(Column('column', table=self.table) - 100.0), '(table.column - 100.0)')
         self.assertEqual(str(Column('column', table=self.table) * 100.0), '(table.column * 100.0)')
-        self.assertEqual(str(Column('column', table=self.table) / 100.0), '(table.column / 100.0)')
+        self.assertEqual(str(Column('column', table=self.table).__div__(100.0)), '(table.column / 100.0)')
+        self.assertEqual(str(Column('column', table=self.table).__truediv__(100.0)), '(table.column / 100.0)')
 
         self.assertEqual(str(Column('column', table=self.table) + 100), '(table.column + 100)')
         self.assertEqual(str(Column('column', table=self.table) + self.param), '(table.column + %(param)s)')
@@ -55,3 +56,6 @@ class TheColumnClassToStringMethod(unittest.TestCase):
 
     def test_works_with_as(self):
         self.assertEqual(str(Column('column', table=self.table).AS('alias')), 'table.column AS alias')
+
+    def test_raises_error_without_table_or_subquery(self):
+        self.assertRaises(ValueError, str, Column('asdf',))

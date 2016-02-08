@@ -10,9 +10,6 @@ class Column(Base):
         self._table = table
         self._subquery = subquery
 
-        if self._table is None and self._subquery is None:
-            raise ValueError('Column instance must have associated Table or SubQuery')
-
         self._between_start = None
         self._between_end = None
         self._in = None
@@ -42,12 +39,6 @@ class Column(Base):
         }
         for key in set(self.math_args.keys()) & set(kwargs.keys()):
             self.math_args[key]['value'] = kwargs[key]
-
-    def __hash__(self):
-        if self._table is not None:
-            return hash('%s.%s' % (self._table._name, self._name))
-        else:
-            return hash('%s.%s' % (self._subquery._name, self._name))
 
     def __eq__(self, other):
         return self.__class__(self._name, self._table, self._subquery, equal=other)
@@ -87,51 +78,30 @@ class Column(Base):
         return self
 
     def BETWEEN(self, start):
-        if self._between_start:
-            raise RuntimeError('must call BETWEEN only once')
-
-        if self._between_end:
-            raise RuntimeError('must call BETWEEN before AND')
-
         self._between_start = start
         return self
 
     def AND(self, end):
-        if not self._between_start:
-            raise RuntimeError('must call BETWEEN before AND')
-
         self._between_end = end
         return self
 
     @property
     def IS_NULL(self):
-        if self._is_not_null:
-            raise RuntimeError('cannot call IS_NULL and IS_NOT_NULL on the same column')
-
         self._is_null = True
         return self
 
     @property
     def IS_NOT_NULL(self):
-        if self._is_null:
-            raise RuntimeError('cannot call IS_NULL and IS_NOT_NULL on the same column')
-
         self._is_not_null = True
         return self
 
     @property
     def ASC(self):
-        if self._desc:
-            raise RuntimeError('cannot call ASC and DESC on the same column')
-
         self._asc = True
         return self
 
     @property
     def DESC(self):
-        if self._asc:
-            raise RuntimeError('cannot call ASC and DESC on the same column')
-
         self._desc = True
         return self
 
@@ -140,15 +110,12 @@ class Column(Base):
         return self
 
     def _to_string(self):
-        if (self._between_start and not self._between_end) or (not self._between_start and self._between_end):
-            raise RuntimeError('must call both BETWEEN and AND together')
-
         if self._table is not None:
             output = '%s.%s' % (self._table._name, self._name)
         elif self._subquery is not None:
             output = '%s.%s' % (self._subquery._name, self._name)
         else:
-            raise RuntimeError('Column instance must have associated Table or SubQuery')
+            raise ValueError('Column instance must have associated Table or SubQuery')
 
         is_math_op = False
         is_comparison = False

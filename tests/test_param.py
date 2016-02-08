@@ -10,6 +10,8 @@ class TheParamClassToStringMethod(unittest.TestCase):
         param = Param('param')
 
         self.assertEqual(str(param), '%(param)s')
+        self.assertEqual(param.__unicode__(), '%(param)s')
+        self.assertEqual(param.__str__(), '%(param)s')
 
 
 class TheAnyClassToStringMethod(unittest.TestCase):

@@ -10,3 +10,13 @@ class TheTableClassToStringMethod(unittest.TestCase):
         table = Table('table')
 
         self.assertEqual(str(table), 'table')
+
+    def test_works_with_as(self):
+        table = Table('table')
+
+        self.assertEqual(str(table.AS('t')), 'table AS t')
+
+    def test_works_with_on(self):
+        table = Table('table')
+
+        self.assertEqual(str(table.ON(table.a == table.b)), 'table ON table.a = table.b')
