@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 import unittest
 
-from norm import Table, Param, CASE
+from mason import Table, Param, CASE
 
 
 class TheCaseClassToStringMethod(unittest.TestCase):

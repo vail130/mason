@@ -1,23 +1,22 @@
 from __future__ import absolute_import, unicode_literals
 
-#  _   _
-# | \ | |
-# |  \| | ___  _ __ _ __ ___
-# | . ` |/ _ \| '__| '_ ` _ \
-# | |\  | (_) | |  | | | | | |
-# \_| \_/\___/|_|  |_| |_| |_|
+#  __  __
+# |  \/  | __ _ ___  ___  _ __
+# | |\/| |/ _` / __|/ _ \| '_ \
+# | |  | | (_| \__ \ (_) | | | |
+# |_|  |_|\__,_|___/\___/|_| |_|
 
 
 """
-Norm SQL Generation Library
+Mason SQL Query Builder
 ~~~~~~~~~~~~~~~~~~~~~
-Norm is a Python library for generating SQL without an ORM.
+Mason is a Python library for building SQL without an ORM.
 
 :copyright: (c) 2016 Vail Gold.
 :license: MIT, see LICENSE for more details.
 """
 
-__title__ = 'norm'
+__title__ = 'mason'
 __version__ = '0.1.0'
 __author__ = 'Vail Gold'
 __license__ = 'MIT'

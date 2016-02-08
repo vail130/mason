@@ -1,7 +1,7 @@
 from __future__ import absolute_import, unicode_literals, division
 
-from norm.base import Base
-from norm.query.base import Query
+from mason.base import Base
+from mason.query.base import Query
 
 
 class Column(Base):

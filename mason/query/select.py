@@ -1,7 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 
-from norm.query.base import Query
-from norm.sub_query import SubQuery
+from mason.query.base import Query
+from mason.sub_query import SubQuery
 
 
 class SELECT(Query):
